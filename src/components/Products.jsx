@@ -2,8 +2,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, CreditCard, IdCard, Smartphone, Shield, BarChart3 } from 'lucide-react';
 import { fadeInUp, staggerContainer } from '../utils/motion';
+import { useCart } from '../context/CartContext';
 
 const Products = () => {
+  const { addToCart, isInCart } = useCart();
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+  };
+
   const products = [
     {
       name: 'Report Kiganjani',
@@ -52,29 +59,29 @@ const Products = () => {
   return (
     <section id="products" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <motion.h2 
+          <motion.h2
             variants={fadeInUp}
             className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
           >
             Our <span className="text-blue-600">Products</span>
           </motion.h2>
-          
-          <motion.p 
+
+          <motion.p
             variants={fadeInUp}
             className="text-lg text-gray-600 max-w-3xl mx-auto"
           >
             Comprehensive digital solutions designed to streamline educational processes and enhance institutional efficiency.
           </motion.p>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
@@ -84,7 +91,7 @@ const Products = () => {
           {products.map((product, index) => {
             const IconComponent = product.icon;
             return (
-              <motion.div 
+              <motion.div
                 key={index}
                 variants={fadeInUp}
                 className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200"
@@ -92,10 +99,10 @@ const Products = () => {
                 <div className={`w-16 h-16 rounded-xl ${getColorClasses(product.color)} flex items-center justify-center mb-6 border`}>
                   <IconComponent size={32} />
                 </div>
-                
+
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{product.name}</h3>
                 <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
-                
+
                 <div className="space-y-3">
                   <h4 className="font-semibold text-gray-900 mb-3">Key Features:</h4>
                   {product.features.map((feature, featureIndex) => (
@@ -105,14 +112,20 @@ const Products = () => {
                     </div>
                   ))}
                 </div>
-                
+
                 <div className="mt-8">
-                  <button className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors duration-300 ${
-                    product.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700 text-white' :
-                    product.color === 'green' ? 'bg-green-600 hover:bg-green-700 text-white' :
-                    'bg-purple-600 hover:bg-purple-700 text-white'
-                  }`}>
-                    Learn More
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    disabled={isInCart(product.name)}
+                    className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors duration-300 ${
+                      isInCart(product.name)
+                        ? 'bg-gray-400 text-white cursor-not-allowed'
+                        : product.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700 text-white' :
+                          product.color === 'green' ? 'bg-green-600 hover:bg-green-700 text-white' :
+                          'bg-purple-600 hover:bg-purple-700 text-white'
+                    }`}
+                  >
+                    {isInCart(product.name) ? 'Added to Cart' : 'Add to Cart'}
                   </button>
                 </div>
               </motion.div>
